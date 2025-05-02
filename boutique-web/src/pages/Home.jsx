@@ -35,6 +35,7 @@ function Home() {
             <Link to={`/product/${product.id}`}>
             <button>Detay</button>
             </Link>
+            
           </div>
         ))}
       </div>
