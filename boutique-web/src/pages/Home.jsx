@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
+  const [startIndex, setStartIndex] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -13,73 +15,112 @@ const Home = () => {
       .catch((err) => console.error("Ürünler alınamadı:", err));
   }, []);
 
+  const handlePrev = () => {
+    if (startIndex > 0) {
+      setStartIndex(startIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (startIndex + 5 < products.length) {
+      setStartIndex(startIndex + 1);
+    }
+  };
+
+  const visibleProducts = products.slice(startIndex, startIndex + 5);
+
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-50 min-h-screen flex flex-col overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-pink-500 to-purple-600 py-20 text-white">
-        <div className="absolute inset-0 bg-black opacity-50"></div>
-        <div className="container mx-auto px-6 relative z-10 text-center">
-          <h1 className="text-5xl font-extrabold mb-4">
-            Yeni Sezon Ürünler
-          </h1>
-          <p className="text-xl mb-8">
-            En trend butik koleksiyonları şimdi sizlerle. Hemen keşfedin!
-          </p>
-          <button
-            onClick={() => navigate("/products")}
-            className="px-8 py-3 bg-pink-700 hover:bg-pink-800 text-white rounded-full text-lg transition duration-300"
-          >
-            Ürünleri Keşfet
-          </button>
-        </div>
-      </section>
-
-      {/* Product Grid Section */}
-      <section className="container mx-auto px-6 py-16">
-        <h2 className="text-4xl font-semibold text-center text-gray-800 mb-12">
-          En Popüler Ürünler
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              onClick={() => navigate(`/product/${product.id}`)}
-              className="bg-white shadow-lg hover:shadow-xl rounded-lg cursor-pointer overflow-hidden transform hover:scale-105 transition-all duration-300"
+      <section className="bg-gray-100">
+        <div className="w-full max-w-screen-xl mx-auto flex flex-col lg:flex-row items-center justify-between px-4 sm:px-6 lg:px-10 py-16 sm:py-24">
+          <div className="lg:w-1/2 text-center lg:text-left mb-10 lg:mb-0">
+            <h1 className="text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
+              Şıklığın Yeni Adresi
+            </h1>
+            <p className="text-xl text-gray-700 mb-8">
+              Modayı yakalayın, her zevke hitap eden koleksiyonlarımızla tarzınızı yansıtın!
+            </p>
+            <button
+              onClick={() => navigate("/products")}
+              className="bg-[#A78BFA] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#8B5CF6] transition"
             >
-              <img
-                src={product.imageUrl}
-                alt={product.name}
-                className="w-full h-72 object-cover transition-transform duration-300 hover:scale-110"
-              />
-              <div className="p-6">
-                <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-                  {product.name}
-                </h3>
-                <p className="text-lg font-semibold text-pink-600">
-                  {product.price} TL
-                </p>
-              </div>
-            </div>
-          ))}
+              Koleksiyonu Keşfet
+            </button>
+          </div>
+          <div className="lg:w-1/2 flex justify-center">
+            <img
+              src="https://static.ticimax.cloud/cdn-cgi/image/width=545,quality=99/3841/uploads/sayfatasarim/sayfa2/title-31ebf35d-4.jpg"
+              alt="Hero görseli"
+              className="rounded-xl shadow-lg object-contain w-full max-w-md h-auto"
+            />
+          </div>
         </div>
       </section>
 
-      {/* Featured Banner Section */}
-      <section className="bg-pink-700 py-12 text-white">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-semibold mb-4">
-            Koleksiyonumuza Göz Atın
-          </h2>
-          <p className="text-xl mb-6">
-            Sadece bu sezon için özel olarak seçilen parçalar sizi bekliyor.
-          </p>
+      {/* Slider Section */}
+      <section className="w-full px-4 sm:px-6 lg:px-10 py-16 bg-white relative">
+        <h2 className="text-4xl font-bold text-center text-purple-900 mb-12">Öne Çıkan Ürünler</h2>
+
+        <div className="relative w-full overflow-hidden">
+          {/* Buttons inside slider */}
           <button
-            onClick={() => navigate("/products")}
-            className="px-8 py-3 bg-white text-pink-700 rounded-full text-lg transition duration-300"
+            onClick={handlePrev}
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-white text-gray-800 shadow-md hover:bg-gray-100 rounded-full p-2"
           >
-            Hemen İncele
+            <FaChevronLeft size={20} />
           </button>
+
+          <button
+            onClick={handleNext}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-white text-gray-800 shadow-md hover:bg-gray-100 rounded-full p-2"
+          >
+            <FaChevronRight size={20} />
+          </button>
+
+          {/* Product slider with transition */}
+          <div className="w-full overflow-hidden">
+            <div
+              className="flex gap-8 transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(-${startIndex * 20}%)` }}
+            >
+              {products.map((product) => (
+                <div
+                  key={product.id}
+                  onClick={() => navigate(`/product/${product.id}`)}
+                  className="min-w-[18%] max-w-[18%] bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
+                >
+                  {/* Ürün Görseli */}
+                  <div className="w-full h-72 p-4 flex items-center justify-center overflow-hidden rounded-t-lg bg-gray-100">
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </div>
+
+                  {/* Ürün Detayları */}
+                  <div className="p-4 text-center">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-1">{product.name}</h3>
+                    <p className="text-base text-purple-700 font-semibold">{product.price} TL</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
+      </section>
+
+      {/* Footer Banner */}
+      <section className="bg-black py-16 text-white text-center">
+        <h2 className="text-3xl font-semibold mb-4 drop-shadow-md">Moda Seninle Başlar</h2>
+        <p className="text-lg mb-6">Butiğimizde sana özel parçaları hemen keşfet!</p>
+        <button
+          onClick={() => navigate("/products")}
+          className="bg-[#A78BFA] hover:bg-[#8B5CF6] px-8 py-3 rounded-full text-lg transition transform hover:scale-110"
+        >
+          Hemen Göz At
+        </button>
       </section>
     </div>
   );
