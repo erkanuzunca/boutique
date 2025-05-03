@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaWhatsapp } from "react-icons/fa"; // WhatsApp iconu ekledik
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -28,6 +29,12 @@ const Home = () => {
   };
 
   const visibleProducts = products.slice(startIndex, startIndex + 5);
+
+  const handleWhatsAppClick = () => {
+    const message = "Merhaba, ürünlerinizi satın almak istiyorum!";
+    const url = `https://wa.me/90XXXXXXXXX?text=${encodeURIComponent(message)}`; // Buradaki '90XXXXXXXXX' yerine WhatsApp numaranızı yazın
+    window.open(url, "_blank");
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col overflow-x-hidden">
@@ -122,6 +129,19 @@ const Home = () => {
           Hemen Göz At
         </button>
       </section>
+
+      {/* WhatsApp Button (Sol Tarafta Sabit) */}
+      <div className="fixed bottom-10 left-10 flex items-center">
+        <button
+          onClick={handleWhatsAppClick}
+          className="bg-green-500 text-white p-4 rounded-full shadow-lg transform hover:scale-110 transition-all duration-300"
+        >
+          <FaWhatsapp size={30} />
+        </button>
+        <div className="ml-3 text-white text-sm hidden group-hover:block transition-all">
+          <p>İletişim için</p>
+        </div>
+      </div>
     </div>
   );
 };
